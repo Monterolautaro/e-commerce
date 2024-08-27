@@ -39,14 +39,14 @@ export class UsersRepository {
     }
 
     
-    async createUser(userData: User): Promise<Partial<User>>{
+    async createUser(userData: Omit<User, 'user_id' | 'orders'>): Promise<Partial<User>>{
         const newUser: User = await this.userRepository.save(userData)
         const { password, ...userNoPassword } = newUser
         
         return userNoPassword;
     }
     
-    async updateUser(id: string, userData: User): Promise<Partial<User>> {
+    async updateUser(id: string, userData: Omit<User, 'user_id' | 'orders'>): Promise<Partial<User>> {
         await this.userRepository.update(id, userData)
         const updatedUser = await this.userRepository.findOneBy({ user_id: id })
         const { password, ...userNoPassword } = updatedUser;

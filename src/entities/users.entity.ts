@@ -37,7 +37,8 @@ export class User {
     address: string
 
     @Column({
-        type: 'int'
+        type: 'varchar',
+        length: 15,
     })
     phone: number
 

@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, NotFoundException, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { LoginUserDto } from 'src/dto/loginUser.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -7,13 +8,24 @@ export class AuthController {
 
     @Get()
     getAuth(): string {
-        return this.AuthService.getAuth();
+        try {
+            return this.AuthService.getAuth();
+        } catch (error) {
+            throw new HttpException({
+                status: HttpStatus.INTERNAL_SERVER_ERROR,
+                error: "Get en auth fallido"
+        }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
     }
 
-    @Post()
-    signIn(@Body() credentials ) {
-        const { email, password } = credentials
+    @Post('signin')
+    async signIn(@Body() credentials: LoginUserDto ) {
+            const { email, password } = credentials
+            const user = await this.AuthService.signIn(email, password)
+            
+            if(!user) throw new NotFoundException('Invalid Credentials In Auth')
 
-        return this.AuthService.signIn(email, password)
+            return user;
     }
+
 }

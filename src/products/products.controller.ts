@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseUUIDPipe, Post, Put, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import Product from 'src/Interfaces/product.interface';
 import { StructureValidationInterceptor } from './structure-validation.interceptor';
@@ -21,7 +21,7 @@ export class ProductsController {
     }
 
     @Get(':id')
-    getProduct(@Param('id') id: string) {
+    getProduct(@Param('id', ParseUUIDPipe) id: string) {
         return this.ProductsService.getProduct(id)
     }
 
@@ -30,7 +30,7 @@ export class ProductsController {
     @Put(':id')
     @UseGuards(AuthGuard)
     @UseInterceptors(StructureValidationInterceptor)
-    updateProducts(@Param('id') id: string, @Body() productData: Product) {
+    updateProducts(@Param('id', ParseUUIDPipe) id: string, @Body() productData: Product) {
         return this.ProductsService.updateProduct(id, productData)
     }
 

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ConflictException, Injectable, InternalServerErrorException } from "@nestjs/common";
 import { UsersRepository } from "./users.repository";
 import { User } from "src/entities/users.entity";
 
@@ -14,11 +14,18 @@ export class UsersService {
         return this.UsersRepository.getUser(id)
     }
 
-    createUser(userData: User) {
-        return this.UsersRepository.createUser(userData)
+    async createUser(userData: Omit<User, 'user_id' | 'orders'>) {
+        try {
+            return await this.UsersRepository.createUser(userData)
+        } catch (error) {
+            if(error.code === '23505') {
+                throw new ConflictException()
+        }   
+            throw new InternalServerErrorException()
+        } 
     }
 
-    updateUser(id: string, userData: User) {
+    updateUser(id: string, userData: Omit<User, 'user_id' | 'orders'>) {
         return this.UsersRepository.updateUser(id, userData)
     }
 
