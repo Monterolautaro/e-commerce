@@ -1,4 +1,4 @@
-import { Injectable, PayloadTooLargeException } from "@nestjs/common";
+import { Injectable, NotFoundException, PayloadTooLargeException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/entities/users.entity";
 import { Repository } from "typeorm";
@@ -25,17 +25,18 @@ export class UsersRepository {
     }
 
     async getUser(id: string) {
-
-        const user: User = await this.userRepository.findOne({
-            where: { user_id: id },
-            relations: {
-                orders: true
-            }
-        })
-        if(!user) return `No se encontro al usuario con id ${id}`
-        const {password, ...userNoPassword } = user
-
-        return userNoPassword
+        try {
+            const user: User = await this.userRepository.findOne({
+                where: { user_id: id },
+                relations: {
+                    orders: true
+                }
+            })
+            const {password, ...userNoPassword } = user
+            return userNoPassword
+        } catch (error) {
+            throw new NotFoundException('User not found')
+        }
     }
 
     

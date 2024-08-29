@@ -1,6 +1,7 @@
-import { Body, Controller, Get, HttpException, HttpStatus, NotFoundException, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpException, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from 'src/dto/loginUser.dto';
+import { CreateUserDto } from 'src/dto/createUser.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -18,14 +19,13 @@ export class AuthController {
         }
     }
 
-    @Post('signin')
-    async signIn(@Body() credentials: LoginUserDto ) {
-            const { email, password } = credentials
-            const user = await this.AuthService.signIn(email, password)
-            
-            if(!user) throw new NotFoundException('Invalid Credentials In Auth')
-
-            return user;
+    @Post('signIn')
+    async signIn(@Body() user: LoginUserDto ) {
+        try {
+            return await this.AuthService.signIn(user)
+        } catch (error) {
+            throw new BadRequestException('Invalid credentials')
+        }
     }
 
 }

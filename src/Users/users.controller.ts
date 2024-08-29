@@ -1,15 +1,17 @@
-import { Body, ConflictException, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, InternalServerErrorException, Param, ParseUUIDPipe, Post, Put, Query, Response, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, ConflictException, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, InternalServerErrorException, Param, ParseUUIDPipe, Post, Put, Query, Response, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { PasswordInterceptor } from "./PasswordInterceptor.interceptor";
 import { ValidateInterceptor } from "./structureValidation.interceptor";
 import { AuthGuard } from "src/auth/authguard.guard";
-import { User } from "src/entities/users.entity";
 import { CreateUserDto } from "src/dto/createUser.dto";
+import { AuthService } from "src/auth/auth.service";
 
 
 @Controller('users')
 export class UsersController {
-    constructor(private readonly UsersService: UsersService) {}
+    constructor(private readonly UsersService: UsersService,
+                private readonly AuthService: AuthService,
+    ) {}
 
     @HttpCode(200)
     @Get()
@@ -26,15 +28,20 @@ export class UsersController {
     @UseGuards(AuthGuard)
     @UseInterceptors(PasswordInterceptor)
     getUser(@Param('id', ParseUUIDPipe) id: string) {
-        return this.UsersService.getUser(id)
+        try {
+            return this.UsersService.getUser(id)
+            
+        } catch (error) {
+            throw new HttpException({ status: HttpStatus.NOT_FOUND, error: 'User not found' }, HttpStatus.NOT_FOUND)
+        }
     }
 
     @HttpCode(201)
-    @Post()
+    @Post('signUp')
     @UseInterceptors(ValidateInterceptor)
     async createUser(@Body() userData: CreateUserDto) {
         try {
-            return await this.UsersService.createUser(userData)
+            return await this.AuthService.signUp(userData)
         } catch (error) {
             if(error instanceof ConflictException) {
                 throw new HttpException({
@@ -59,4 +66,5 @@ export class UsersController {
     deleteUser(@Param('id', ParseUUIDPipe) id: string) {
         return this.UsersService.deleteUser(id)
     }
+
 }
