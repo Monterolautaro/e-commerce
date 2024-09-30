@@ -21,6 +21,15 @@ export class AuthGuard implements CanActivate {
       request.iat = new Date(payload.iat * 1000)
       request.exp = new Date(payload.exp * 1000)
       request.user = payload
+
+      if(payload.isAdmin){
+        payload.roles = ['admin']
+      } else {
+        payload.roles = ['user']
+      }
+
+      request.payload = payload;
+
       return true;
 
     } catch (error) {

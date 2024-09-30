@@ -3,7 +3,12 @@ import { ProductsService } from './products.service';
 import Product from 'src/Interfaces/product.interface';
 import { StructureValidationInterceptor } from './structure-validation.interceptor';
 import { AuthGuard } from 'src/auth/authguard.guard';
+import { ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from 'src/roles.enum';
+import { RolesGuard } from 'src/auth/roles.guard';
 
+@ApiTags('products')
 @Controller('products')
 export class ProductsController {
     constructor(private readonly ProductsService: ProductsService ) {}
@@ -28,7 +33,8 @@ export class ProductsController {
 
     @HttpCode(200)
     @Put(':id')
-    @UseGuards(AuthGuard)
+    @Roles(Role.Admin)
+    @UseGuards(AuthGuard, RolesGuard)
     @UseInterceptors(StructureValidationInterceptor)
     updateProducts(@Param('id', ParseUUIDPipe) id: string, @Body() productData: Product) {
         return this.ProductsService.updateProduct(id, productData)

@@ -49,6 +49,12 @@ export class User {
     country: string
 
     @Column({
+        type: 'boolean',
+        default: false
+    })
+    isAdmin: boolean;
+
+    @Column({
         type: 'text'
     })
     city: string

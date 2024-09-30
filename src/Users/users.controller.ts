@@ -1,12 +1,18 @@
-import { Body, ConflictException, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, InternalServerErrorException, Param, ParseUUIDPipe, Post, Put, Query, Response, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, ConflictException, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, InternalServerErrorException, Param, ParseUUIDPipe, Post, Put, Query, Req, Response, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { PasswordInterceptor } from "./PasswordInterceptor.interceptor";
 import { ValidateInterceptor } from "./structureValidation.interceptor";
 import { AuthGuard } from "src/auth/authguard.guard";
 import { CreateUserDto } from "src/dto/createUser.dto";
 import { AuthService } from "src/auth/auth.service";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { Roles } from "src/decorators/roles.decorator";
+import { Role } from "src/roles.enum";
+import { RolesGuard } from "src/auth/roles.guard";
 
 
+@ApiBearerAuth()
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
     constructor(private readonly UsersService: UsersService,
@@ -15,8 +21,9 @@ export class UsersController {
 
     @HttpCode(200)
     @Get()
+    @Roles(Role.Admin)
     @UseInterceptors(PasswordInterceptor)
-    @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard, RolesGuard)
     getUsers(@Query('page') page:number = 1, @Query('limit') limit: number = 5) {
         if(page && limit) return this.UsersService.getUsers(page, limit)
 
@@ -41,6 +48,7 @@ export class UsersController {
     @UseInterceptors(ValidateInterceptor)
     async createUser(@Body() userData: CreateUserDto) {
         try {
+
             return await this.AuthService.signUp(userData)
         } catch (error) {
             if(error instanceof ConflictException) {

@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { loggerGlobal } from './middlewares/logger';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,6 +20,16 @@ async function bootstrap() {
         alert: "se han detectado los siguientes errores:",
         errors: cleanErrors
       });}}))
+
+    const swaggerConfig = new DocumentBuilder()
+    .setTitle('Ecommerce')
+    .setDescription('The ecommerce API description')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
 }
