@@ -74,4 +74,13 @@ export class UsersRepository {
         return user
     }
 
+//     setAdmin(id){
+
+//         const user = this.userRepository.findOneBy({ user_id: id })
+//         user.isAdmin = true
+//         this.userRepository.save(user)
+//         return
+//     }
+
+// 
 }

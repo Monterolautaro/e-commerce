@@ -43,23 +43,6 @@ export class UsersController {
         }
     }
 
-    @HttpCode(201)
-    @Post('signUp')
-    @UseInterceptors(ValidateInterceptor)
-    async createUser(@Body() userData: CreateUserDto) {
-        try {
-
-            return await this.AuthService.signUp(userData)
-        } catch (error) {
-            if(error instanceof ConflictException) {
-                throw new HttpException({
-                    status: HttpStatus.CONFLICT,
-                    error: {message: 'Some credentials already exists'} }, HttpStatus.CONFLICT)
-            }
-            throw new InternalServerErrorException(error.message)
-        }
-    }
-
     @HttpCode(200)
     @Put(':id')
     @UseGuards(AuthGuard)
@@ -75,4 +58,9 @@ export class UsersController {
         return this.UsersService.deleteUser(id)
     }
 
+    // @Put(':id')
+    // @UseGuards(AuthGuard)
+    // setAdmin (@Param('id', ParseUUIDPipe) id: string) {
+    //     return this.UsersService.setAdmin(id)
+    // }
 }

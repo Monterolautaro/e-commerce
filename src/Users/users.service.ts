@@ -32,4 +32,9 @@ export class UsersService {
     deleteUser(id) {
         return this.UsersRepository.deleteUser(id)
     }
+
+//     setAdmin(id){
+//         return this.UsersRepository.setAdmin(id)
+//     }
+// 
 };

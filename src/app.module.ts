@@ -18,15 +18,15 @@ import { JwtModule } from '@nestjs/jwt';
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => 
+      useFactory: (configService: ConfigService) =>
         configService.get('typeorm')
     }),
-    AuthModule, ProductsModule ,UsersModule, CategoriesModule, orderModule, FilesModule, JwtModule.register({
+    AuthModule, ProductsModule, UsersModule, CategoriesModule, orderModule, FilesModule, JwtModule.register({
       global: true,
       signOptions: { expiresIn: '1h' },
       secret: process.env.JWT_SECRET
-    }) ],
+    })],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/dto/createUser.dto';
 import { LoginUserDto } from 'src/dto/loginUser.dto';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from 'src/roles.enum';
 
 @Injectable()
 export class AuthRepository {
@@ -40,7 +41,7 @@ async signIn(user: LoginUserDto) {
 
     if(!isValidPassword) throw new BadRequestException('invalid credentials')
 
-    const userPayload = {sub: foundUser.user_id, name: foundUser.name, email: foundUser.email, id: foundUser.user_id, isAdmin: foundUser.isAdmin}
+    const userPayload = {sub: foundUser.user_id, name: foundUser.name, email: foundUser.email, id: foundUser.user_id, roles: [ foundUser.isAdmin ? Role.Admin : Role.User]}
     const token = this.JwtService.sign(userPayload)
     return {success: "You're logged in successfully", token}
 }

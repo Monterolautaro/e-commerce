@@ -13,4 +13,4 @@ import { Product } from 'src/entities/products.entity';
   controllers: [OrderController],
   providers: [OrderService, OrderRepository]
 })
-export class orderModule {}
+export class orderModule { }
