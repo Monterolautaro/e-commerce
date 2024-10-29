@@ -2,7 +2,7 @@ import { Body, ConflictException, Controller, Delete, Get, HttpCode, HttpExcepti
 import { UsersService } from "./users.service";
 import { PasswordInterceptor } from "./PasswordInterceptor.interceptor";
 import { ValidateInterceptor } from "./structureValidation.interceptor";
-import { AuthGuard } from "src/auth/authguard.guard";
+import { AuthGuard } from "src/auth/authguard";
 import { CreateUserDto } from "src/dto/createUser.dto";
 import { AuthService } from "src/auth/auth.service";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
@@ -32,7 +32,8 @@ export class UsersController {
 
     @HttpCode(200)
     @Get(':id')
-    @UseGuards(AuthGuard)
+    @Roles(Role.User, Role.Admin)
+    @UseGuards(AuthGuard, RolesGuard)
     @UseInterceptors(PasswordInterceptor)
     getUser(@Param('id', ParseUUIDPipe) id: string) {
         try {
@@ -45,7 +46,8 @@ export class UsersController {
 
     @HttpCode(200)
     @Put(':id')
-    @UseGuards(AuthGuard)
+    @Roles(Role.User, Role.Admin)
+    @UseGuards(AuthGuard, RolesGuard)
     @UseInterceptors(ValidateInterceptor)
     updateUser(@Param('id', ParseUUIDPipe) id: string, @Body() userData: CreateUserDto) {
         return this.UsersService.updateUser(id, userData)
@@ -53,7 +55,8 @@ export class UsersController {
 
     @HttpCode(200)
     @Delete(':id')
-    @UseGuards(AuthGuard)
+    @Roles(Role.Admin)
+    @UseGuards(AuthGuard, RolesGuard)
     deleteUser(@Param('id', ParseUUIDPipe) id: string) {
         return this.UsersService.deleteUser(id)
     }

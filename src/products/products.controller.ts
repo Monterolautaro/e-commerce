@@ -2,13 +2,13 @@ import { Body, Controller, Delete, Get, HttpCode, Param, ParseUUIDPipe, Post, Pu
 import { ProductsService } from './products.service';
 import Product from 'src/Interfaces/product.interface';
 import { StructureValidationInterceptor } from './structure-validation.interceptor';
-import { AuthGuard } from 'src/auth/authguard.guard';
+import { AuthGuard } from 'src/auth/authguard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/roles.enum';
 import { RolesGuard } from 'src/auth/roles.guard';
 
-// @ApiBearerAuth()
+@ApiBearerAuth()
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
@@ -16,8 +16,8 @@ export class ProductsController {
 
 
     @Get()
-    // @Roles(Role.Admin)
-    @UseGuards(AuthGuard)
+    @Roles(Role.Admin)
+    @UseGuards(AuthGuard, RolesGuard)
     getProducts(@Query('page') page:number = 1, @Query('limit') limit: number = 5): Product {
         if(page && limit) return this.ProductsService.getProducts(page, limit)
 
@@ -25,15 +25,13 @@ export class ProductsController {
     }
 
     @Get('seeder')
-    // @Roles(Role.Admin)
-    @UseGuards(AuthGuard)
     addProducts() {
         return this.ProductsService.addProduct()
     }
 
     @Get(':id')
-    // @Roles(Role.User, Role.Admin)
-    @UseGuards(AuthGuard)
+    @Roles(Role.User, Role.Admin)
+    @UseGuards(AuthGuard, RolesGuard)
     getProduct(@Param('id', ParseUUIDPipe) id: string) {
         return this.ProductsService.getProduct(id)
     }
@@ -41,8 +39,8 @@ export class ProductsController {
 
     @HttpCode(200)
     @Put(':id')
-    // @Roles(Role.Admin)
-    @UseGuards(AuthGuard)
+    @Roles(Role.Admin)
+    @UseGuards(AuthGuard, RolesGuard)
     @UseInterceptors(StructureValidationInterceptor)
     updateProducts(@Param('id', ParseUUIDPipe) id: string, @Body() productData: Product) {
         return this.ProductsService.updateProduct(id, productData)

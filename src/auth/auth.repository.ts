@@ -41,8 +41,14 @@ async signIn(user: LoginUserDto) {
 
     if(!isValidPassword) throw new BadRequestException('invalid credentials')
 
-    const userPayload = {sub: foundUser.user_id, name: foundUser.name, email: foundUser.email, id: foundUser.user_id, roles: [ foundUser.isAdmin ? Role.Admin : Role.User]}
-    const token = this.JwtService.sign(userPayload)
+    // const userPayload = {sub: foundUser.user_id, name: foundUser.name, email: foundUser.email, id: foundUser.user_id, roles: [ foundUser.isAdmin ? Role.Admin : Role.User]}
+    
+     const payload = {
+        id: foundUser.user_id,
+        email: foundUser.email,
+        isAdmin: foundUser.isAdmin
+     }
+    const token = this.JwtService.sign(payload)
     return {success: "You're logged in successfully", token}
 }
 }

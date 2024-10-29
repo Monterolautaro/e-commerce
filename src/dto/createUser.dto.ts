@@ -49,20 +49,36 @@ export class CreateUserDto {
     @IsString()
     @IsNotEmpty()
     @Length(3, 80)
+    @ApiProperty({
+        description: 'User address',
+        example: 'Calle falsa 123'
+    })
     address: string;
 
     @IsNotEmpty()
     @IsPhoneNumber('AR')
+    @ApiProperty({
+        description: 'User phone number',
+        example: "+5492994561836"
+    })
     phone: number;
 
     @IsString()
     @IsNotEmpty()
     @Length(5, 20)
+    @ApiProperty({
+        description: 'User country',
+        example: 'Argentina'
+    })
     country: string;
 
     @IsString()
     @IsNotEmpty()
     @Length(5, 20)
+    @ApiProperty({
+        description: 'User city',
+        example: 'Buenos Aires'
+    })
     city: string;
 
     @IsEmpty()
