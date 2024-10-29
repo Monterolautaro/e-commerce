@@ -8,13 +8,13 @@ import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/roles.enum';
 import { RolesGuard } from 'src/auth/roles.guard';
 
-@ApiBearerAuth()
+
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
     constructor(private readonly ProductsService: ProductsService ) {}
 
-
+    @ApiBearerAuth()
     @Get()
     @Roles(Role.Admin)
     @UseGuards(AuthGuard, RolesGuard)
@@ -29,8 +29,9 @@ export class ProductsController {
         return this.ProductsService.addProduct()
     }
 
+    @ApiBearerAuth()
     @Get(':id')
-    @Roles(Role.User, Role.Admin)
+    @Roles(Role.Admin)
     @UseGuards(AuthGuard, RolesGuard)
     getProduct(@Param('id', ParseUUIDPipe) id: string) {
         return this.ProductsService.getProduct(id)
@@ -38,6 +39,7 @@ export class ProductsController {
 
 
     @HttpCode(200)
+    @ApiBearerAuth()
     @Put(':id')
     @Roles(Role.Admin)
     @UseGuards(AuthGuard, RolesGuard)

@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ProductRepository } from './products.repository';
-import Product from 'src/Interfaces/product.interface';
+import { CategoriesService } from 'src/categories/categories.service';
 
 @Injectable()
-export class ProductsService {
-    constructor(private readonly ProductRepository: ProductRepository) {}
+export class ProductsService implements OnModuleInit{
+    constructor(private readonly ProductRepository: ProductRepository,
+        private readonly CategoriesRepository: CategoriesService
+    ) {}
 
     getProducts(page, limit): any {
         return this.ProductRepository.getProducts(page, limit);
@@ -16,6 +18,11 @@ export class ProductsService {
 
     async addProduct() {
         return this.ProductRepository.addProduct()
+    }
+
+    async onModuleInit() {
+        await this.CategoriesRepository.onModuleInit()
+        await this.addProduct()
     }
 
     async updateProduct(id, productData) {
