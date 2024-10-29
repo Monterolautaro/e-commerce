@@ -20,15 +20,15 @@ export class AuthGuard implements CanActivate {
       request.exp = new Date(payload.exp * 1000)
       request.user = payload
       
-      console.log('payload: ', { payload} )
+      // console.log('payload: ', { payload} )
 
-      // if(payload.isAdmin){
-      //   payload.roles = ['admin']
-      // } else {
-      //   payload.roles = ['user']
-      // }
+      if(payload.isAdmin){
+        payload.roles = ['admin']
+      } else {
+        payload.roles = ['user']
+      }
 
-      // request.payload = payload;
+      request.payload = payload;
 
       return true;
 

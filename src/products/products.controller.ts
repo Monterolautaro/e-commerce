@@ -3,17 +3,21 @@ import { ProductsService } from './products.service';
 import Product from 'src/Interfaces/product.interface';
 import { StructureValidationInterceptor } from './structure-validation.interceptor';
 import { AuthGuard } from 'src/auth/authguard.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/roles.enum';
 import { RolesGuard } from 'src/auth/roles.guard';
 
+// @ApiBearerAuth()
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
     constructor(private readonly ProductsService: ProductsService ) {}
 
+
     @Get()
+    // @Roles(Role.Admin)
+    @UseGuards(AuthGuard)
     getProducts(@Query('page') page:number = 1, @Query('limit') limit: number = 5): Product {
         if(page && limit) return this.ProductsService.getProducts(page, limit)
 
@@ -21,11 +25,15 @@ export class ProductsController {
     }
 
     @Get('seeder')
+    // @Roles(Role.Admin)
+    @UseGuards(AuthGuard)
     addProducts() {
         return this.ProductsService.addProduct()
     }
 
     @Get(':id')
+    // @Roles(Role.User, Role.Admin)
+    @UseGuards(AuthGuard)
     getProduct(@Param('id', ParseUUIDPipe) id: string) {
         return this.ProductsService.getProduct(id)
     }
@@ -33,8 +41,8 @@ export class ProductsController {
 
     @HttpCode(200)
     @Put(':id')
-    @Roles(Role.Admin)
-    @UseGuards(AuthGuard, RolesGuard)
+    // @Roles(Role.Admin)
+    @UseGuards(AuthGuard)
     @UseInterceptors(StructureValidationInterceptor)
     updateProducts(@Param('id', ParseUUIDPipe) id: string, @Body() productData: Product) {
         return this.ProductsService.updateProduct(id, productData)

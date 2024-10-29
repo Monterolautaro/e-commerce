@@ -23,7 +23,7 @@ async function bootstrap() {
 
     const swaggerConfig = new DocumentBuilder()
     .setTitle('Ecommerce')
-    .setDescription('The ecommerce API description')
+    .setDescription('M4 - Backend proyect')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

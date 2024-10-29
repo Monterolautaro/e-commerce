@@ -69,4 +69,11 @@ export class ProductRepository {
       return updatedProduct
     }
 
+    // async restoreProductsStock() {
+    //     const products = await this.productRepository.find();
+    //     products.map(async (product) => {
+    //         await this.productRepository.update(product.product_id, { stock: product.stock + product.stock })
+    //     })
+    // }
+
 }

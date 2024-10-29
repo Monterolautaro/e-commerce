@@ -21,66 +21,61 @@ export class OrderRepository {
 
     async addOrder(id: string, products: any) {
         let total = 0;
-        
-        const foundUser = await this.userRepository.findOneBy({ user_id: id })
-        if (!foundUser) throw new Error('Usuario no encontrado')
-
+    
+        const foundUser = await this.userRepository.findOneBy({ user_id: id });
+        if (!foundUser) throw new Error('Usuario no encontrado');
+    
         const order = new Order();
         order.date = new Date();
-        order.user = foundUser
-        console.log({ 'Esto es lo que llega': products });
-
-        const newOrder = await this.orderRepository.save(order)
-
-        console.log({ 'Esta es la neworder': newOrder });
-        console.log({ 'Esto es lo que llega': products });
-
-
-
+        order.user = foundUser;
+    
+        const newOrder = await this.orderRepository.save(order);
+    
         const productsArray = await Promise.all(
             products.map(async (element) => {
-                console.log({ 'Este es el element_id': element.id });
-
                 const product = await this.productRepository.findOneBy({
-                    product_id: element.id
-                })
-
-                console.log({ 'Este es el product linea 48': product });
-
-                if (!product) throw new NotFoundException('Product not found')
-                if(product.stock < 1) throw new BadRequestException
-
+                    product_id: element.id,
+                });
+    
+                if (!product) return `Producto con id ${element.id} no encontrado`;
+    
+                // Verifico si hay stock disponible
+                if (product.stock <= 0) {
+                    throw new BadRequestException(`Producto ${element.id} sin stock`);
+                }
+    
                 total += Number(product.price);
-
+    
+                // Actualizo el stock
                 await this.productRepository.update(
-                    { product_id: element.product_id },
+                    { product_id: element.id },
                     { stock: product.stock - 1 }
                 );
-
+    
                 return product;
             })
-        )
-
-
+        );
+    
+     
         const orderDetail = new OrderDetail();
 
         orderDetail.price = Number(Number(total).toFixed(2));
         orderDetail.order = newOrder;
         orderDetail.products = productsArray;
-
-        console.log({ 'Esta es la orderdetail': orderDetail });
-
+        
+        
         await this.orderDetailRepository.save(orderDetail)
-
-
-
+        
+        
+        
         return await this.orderRepository.find({
             where: { order_id: newOrder.order_id },
             relations: {
-                orderDetail: { products: true }
+                orderDetail: {products: true}
             }
         })
-    }
+    }  
+    
 
 
     async getOrders(id): Promise<Order> {
