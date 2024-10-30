@@ -28,7 +28,6 @@ export class AuthController {
     @UseInterceptors(ValidateInterceptor)
     async createUser(@Body() userData: CreateUserDto) {
         try {
-
             return await this.AuthService.signUp(userData)
         } catch (error) {
             if(error instanceof ConflictException) {
@@ -39,6 +38,8 @@ export class AuthController {
             throw new InternalServerErrorException(error.message)
         }
     }
+
+
 
     @Post('signIn')
     @ApiBody({type: LoginUserDto})

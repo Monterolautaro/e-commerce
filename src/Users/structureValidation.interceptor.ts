@@ -5,9 +5,9 @@ import { Observable } from 'rxjs';
 export class ValidateInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest()
-    const { email, name, password, address, phone, country, city } = request.body
+    const { email, name, password, address, phone, country, city, birthday } = request.body
 
-    if(email && name && password && address && phone && country && city){
+    if(email && name && password && address && phone && country && city && birthday){
       return next.handle()
     }else{
      throw new BadRequestException("La estructura del body es incorrecta")

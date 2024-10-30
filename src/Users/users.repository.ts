@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, PayloadTooLargeException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException, PayloadTooLargeException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/entities/users.entity";
 import { Repository } from "typeorm";
@@ -56,13 +56,24 @@ export class UsersRepository {
     }
     
     async deleteUser(id: string): Promise<Partial<User>> {
-        const user = await this.userRepository.findOneBy({ user_id: id });
-        this.userRepository.remove(user);
 
-        const { password, ...userNoPassword } = user;
+        const user = await this.userRepository.findOneBy({ user_id: id });
         
-        return userNoPassword;
+        if(!user) throw new NotFoundException('User not found')
         
+        try {
+
+            await this.userRepository.remove(user)
+    
+            const { password, ...userNoPassword } = user;
+            
+            return userNoPassword;
+
+        } catch (error) {
+
+            throw new BadRequestException('Para eliminar un usuario se deben borrar todas sus ordenes', error)
+
+        }
     }
     
     async getUserByEmail(email: string) {

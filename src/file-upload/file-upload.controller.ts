@@ -2,7 +2,7 @@ import { Controller, FileTypeValidator, MaxFileSizeValidator, Param, ParseFilePi
 import { FilesService } from './file-upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/auth/authguard';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Role } from 'src/roles.enum';
 import { Roles } from 'src/decorators/roles.decorator';
@@ -14,6 +14,19 @@ export class FilesController {
     constructor(private readonly filesService: FilesService) {}
 
     @Post('uploadImage/:id')
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        description: 'Subida de imagen para el producto.',
+        schema: {
+            type: 'object',
+            properties: {
+                file: {
+                    type: 'string',
+                    format: 'binary',
+                },
+            },
+        },
+    })
     @Roles(Role.Admin)
     @UseGuards(AuthGuard, RolesGuard)
     @UseInterceptors(FileInterceptor('file'))

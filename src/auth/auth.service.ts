@@ -11,11 +11,13 @@ export class AuthService {
         }
 
         async signUp(user){
+
             return await this.AuthRepository.signUp(user);
+            
         }
         
         async signIn(user) {
-            
+
             return await this.AuthRepository.signIn(user)
             
         }

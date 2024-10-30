@@ -49,6 +49,12 @@ export class User {
     country: string
 
     @Column({
+        type: 'date',
+        nullable: true
+    })
+    birthday: Date
+
+    @Column({
         type: 'boolean',
         default: false
     })

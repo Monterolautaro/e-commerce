@@ -1,5 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsEmpty, IsNotEmpty, IsPhoneNumber, IsString, Length, Matches, MaxLength, MinLength} from "class-validator";
+import { ApiHideProperty, ApiProperty } from "@nestjs/swagger";
+import { IsDate, IsEmail, IsEmpty, IsNotEmpty, IsPhoneNumber, IsString, Length, Matches, MaxLength, MinLength} from "class-validator";
 
 export class CreateUserDto {
     @IsString()
@@ -56,6 +56,14 @@ export class CreateUserDto {
     address: string;
 
     @IsNotEmpty()
+    @IsDate()
+    @ApiProperty({
+        description: 'User birthday',
+        example: '18-04-2000'
+    })
+    birthday: Date
+
+    @IsNotEmpty()
     @IsPhoneNumber('AR')
     @ApiProperty({
         description: 'User phone number',
@@ -81,6 +89,7 @@ export class CreateUserDto {
     })
     city: string;
 
-    @IsEmpty()
-    isAdmin?: boolean;
+    // @ApiHideProperty()
+    // @IsEmpty()
+    // isAdmin?: boolean;
 }

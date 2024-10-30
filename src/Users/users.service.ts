@@ -25,8 +25,10 @@ export class UsersService {
         } 
     }
 
-    updateUser(id: string, userData: Omit<User, 'user_id' | 'isAdmin' | 'orders'>) {
+    updateUser(id: string, userData: Omit<User, 'user_id' | 'isAdmin' | 'orders' >) {
+
         return this.UsersRepository.updateUser(id, userData)
+
     }
 
     deleteUser(id) {

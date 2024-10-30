@@ -14,10 +14,7 @@ import { RolesGuard } from 'src/auth/roles.guard';
 export class ProductsController {
     constructor(private readonly ProductsService: ProductsService ) {}
 
-    @ApiBearerAuth()
     @Get()
-    @Roles(Role.Admin)
-    @UseGuards(AuthGuard, RolesGuard)
     getProducts(@Query('page') page:number = 1, @Query('limit') limit: number = 5): Product {
         if(page && limit) return this.ProductsService.getProducts(page, limit)
 
@@ -29,10 +26,7 @@ export class ProductsController {
         return this.ProductsService.addProduct()
     }
 
-    @ApiBearerAuth()
     @Get(':id')
-    @Roles(Role.Admin)
-    @UseGuards(AuthGuard, RolesGuard)
     getProduct(@Param('id', ParseUUIDPipe) id: string) {
         return this.ProductsService.getProduct(id)
     }
