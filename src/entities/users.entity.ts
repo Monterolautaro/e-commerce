@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { v4 as uuid } from 'uuid'
 import { Order } from "./orders.entity";
+import { Role } from "src/roles.enum";
 
 @Entity({
     name: 'users'
@@ -59,6 +60,13 @@ export class User {
         default: false
     })
     isAdmin: boolean;
+
+    // @Column({
+    //     type: 'enum',
+    //     enum: Role,
+    //     default: Role.User
+    // })
+    // role: Role
 
     @Column({
         type: 'text'
